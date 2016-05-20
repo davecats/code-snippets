@@ -1,0 +1,56 @@
+outinterv=1
+gamma=0
+USE dnsdata
+USE dnsdirect
+USE rtchecks
+
+FILE f90outfile=OPEN("Dati.f90.out")
+
+LOOP FOR iz=-nz TO nz
+  LOOP FOR ix=0 TO nx
+    LOOP FOR iy=-1 TO ny+1
+        READ BINARY FROM f90outfile V(ix,iz,iy).u
+    REPEAT
+  REPEAT 
+REPEAT
+LOOP FOR iz=-nz TO nz
+  LOOP FOR ix=0 TO nx
+    LOOP FOR iy=-1 TO ny+1
+        READ BINARY FROM f90outfile V(ix,iz,iy).v
+    REPEAT
+  REPEAT
+REPEAT
+LOOP FOR iz=-nz TO nz
+  LOOP FOR ix=0 TO nx
+    LOOP FOR iy=-1 TO ny+1
+        READ BINARY FROM f90outfile V(ix,iz,iy).w
+    REPEAT
+  REPEAT
+REPEAT
+CLOSE(f90outfile)
+
+
+  DO WITH V(0,0,iy): u=~-u_conv; w=~-w_conv FOR ALL iy
+  IF NOT first THEN READ FROM prev
+  diskimage = OPEN("Dati.cart.out")
+  WITH diskimage
+    IF has_terminal THEN
+      WRITE "Writing Dati.cart.out at time", time
+      WRITE TO header <<??
+         ny=??ny??       nx=??nx??       nz=??nz??
+         alfa0=??alfa0??     beta0=??beta0??
+         ymin=??ymin??        ymax=??ymax??          a=??a??
+         ni=??1/ni??       time=??time??
+         ??
+    END IF
+
+   LOOP FOR iy = miny TO maxy
+     DO velbuf(0..nx,iz) = V(0..nx,iz,iy) FOR ALL iz
+     Vimage(iy) = velbuf
+   REPEAT LOOP
+ 
+  CLOSE diskimage
+  IF NOT last THEN WRITE TO next
+  DO WITH V(0,0,iy): u=~+u_conv; w=~+w_conv FOR ALL iy
+
+

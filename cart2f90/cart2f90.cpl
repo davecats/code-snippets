@@ -1,0 +1,37 @@
+outinterv=1
+gamma=0
+USE dnsdata
+USE dnsdirect
+USE rtchecks
+
+WRITE nxd,nzd
+
+read_restart_file
+
+FILE f90outfile=CREATE("Dati.f90.out")
+
+LOOP FOR iz=-nz TO nz
+  LOOP FOR ix=0 TO nx
+    LOOP FOR iy=-1 TO ny+1
+        WRITE BINARY TO f90outfile V(ix,iz,iy).u
+    REPEAT
+  REPEAT 
+REPEAT
+
+LOOP FOR iz=-nz TO nz
+  LOOP FOR ix=0 TO nx
+    LOOP FOR iy=-1 TO ny+1
+        WRITE BINARY TO f90outfile V(ix,iz,iy).v
+    REPEAT
+  REPEAT
+REPEAT
+
+LOOP FOR iz=-nz TO nz
+  LOOP FOR ix=0 TO nx
+    LOOP FOR iy=-1 TO ny+1
+        WRITE BINARY TO f90outfile V(ix,iz,iy).w
+    REPEAT
+  REPEAT
+REPEAT
+
+CLOSE(f90outfile)
